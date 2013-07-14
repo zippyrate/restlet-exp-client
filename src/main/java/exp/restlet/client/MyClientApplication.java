@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.Context;
+import org.restlet.data.CharacterSet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.ext.json.JsonRepresentation;
@@ -23,17 +24,13 @@ public class MyClientApplication
 	{
 		Context restletContext = new Context();
 		ClientResource clientResource = new ClientResource(restletContext, "http://localhost:8080/coordination/");
-		// Representation request = new JsonRepresentation("{ \"terms\": [] }");
-		Representation request;
 
 		try {
-			request = new JsonRepresentation(createCoordination());
-			request.setMediaType(MediaType.APPLICATION_JSON); // CharacterSet.UTF_8);
+			Representation request = new JsonRepresentation(createTestCoordination());
+			request.setMediaType(MediaType.APPLICATION_JSON);
+			request.setCharacterSet(CharacterSet.UTF_8);
 
 			Representation response = clientResource.post(request);
-
-			Status status = clientResource.getStatus();
-			logger.info("SS: " + status);
 
 			decodeResponse(response);
 			response.release();
@@ -52,7 +49,7 @@ public class MyClientApplication
 		}
 	}
 
-	private static JSONObject createCoordination() throws JSONException
+	private static JSONObject createTestCoordination() throws JSONException
 	{
 		JSONObject requestObject = new JSONObject();
 		JSONArray items = new JSONArray();
@@ -77,18 +74,16 @@ public class MyClientApplication
 		return term;
 	}
 
-	private static String decodeErrorResponse(Representation responseRepresentation)
+	private static void decodeErrorResponse(Representation responseRepresentation)
 	{
 		try {
 			JsonRepresentation returnedRepresentation = new JsonRepresentation(responseRepresentation);
 			JSONObject responseObject = returnedRepresentation.getJsonObject();
 			String error = responseObject.getString("error");
-
+			logger.info(error);
 			responseRepresentation.release();
-			return error;
 		} catch (Exception e) {
 			logger.warn("Bad JSON error response", e);
-			return "Bad JSON error response";
 		}
 	}
 
@@ -102,7 +97,7 @@ public class MyClientApplication
 		String description = responseObject.getString("description");
 		responseRepresentation.release();
 
-		logger.info("termID " + termID + "termID " + termID + ", schemaName " + schemaName + ", schemaVersion "
-				+ schemaVersion + ", description " + description);
+		logger.info("termID " + termID + ", schemaName " + schemaName + ", schemaVersion " + schemaVersion
+				+ ", description " + description);
 	}
 }
