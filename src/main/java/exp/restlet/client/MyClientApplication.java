@@ -23,7 +23,8 @@ public class MyClientApplication
 	public static void main(String[] args)
 	{
 		Context restletContext = new Context();
-		ClientResource clientResource = new ClientResource(restletContext, "http://localhost:8080/coordination/");
+		ClientResource clientResource = new ClientResource(restletContext,
+				"http://epad-dev2.stanford.edu:8080/coordination/");
 
 		try {
 			Representation request = new JsonRepresentation(createTestCoordination());
@@ -69,7 +70,7 @@ public class MyClientApplication
 		term.put("termID", termID);
 		term.put("schemaName", schemaName);
 		term.put("schemaVersion", schemaVersion);
-		term.put("description", "");
+		term.put("description", "A");
 
 		return term;
 	}
